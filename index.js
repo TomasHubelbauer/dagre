@@ -22,6 +22,10 @@ window.addEventListener('load', () => {
     node('branch-1-2', 'Branch 1-2');
     edge('branch-1', 'branch-1-2');
 
+    node('merge', 'Merge');
+    edge('branch-1-1', 'merge');
+    edge('branch-1-2', 'merge');
+
     node('branch-2', 'Branch 2');
     edge('root', 'branch-2');
 
