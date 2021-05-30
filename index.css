@@ -46,6 +46,10 @@ polyline {
   stroke: gray;
 }
 
+foreignObject {
+  cursor: pointer;
+}
+
 #jsonDiv {
   display: flex;
   flex-direction: column;

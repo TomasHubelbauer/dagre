@@ -9,12 +9,15 @@
 
 [GitHub Pages](https://tomashubelbauer.github.io/dagre)
 
+## Features
+
+- Code synced to graph
+- UI + button for adding a new node connected to an existing node
+- UI + button for splitting an edge into two with a node in between
+- Clicking on a node allows enabling it and updating references
+
 ## To-Do
 
-### Add SVG `foreignObject` controls for adding nodes and edges
+### Adjust code `TODO` comments
 
-https://developer.mozilla.org/en-US/docs/Web/SVG/Element/foreignObject
-
-For this to keep in sync with the code, I first need to come up with a way to
-serialize the graph into code so that whenever I add nodes/edges through the UI,
-the code keeps reflecting the graph.
+### Implement a UI control for removing nodes and edges (right-click?)

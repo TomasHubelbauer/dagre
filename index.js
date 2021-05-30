@@ -123,9 +123,9 @@ window.addEventListener('load', () => {
 
       const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       rect.setAttribute('height', ~~node.height);
+      rect.setAttribute('width', ~~node.width);
       rect.setAttribute('x', ~~(node.x - node.width / 2) + 1);
       rect.setAttribute('y', ~~(node.y - node.height / 2) + 1);
-      rect.setAttribute('width', ~~node.width);
       svg.append(rect);
 
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -134,6 +134,35 @@ window.addEventListener('load', () => {
       text.setAttribute('y', ~~node.y + spacing + 1);
       text.textContent = node.label;
       svg.append(text);
+
+      text.addEventListener('click', () => {
+        const label = prompt(node.label);
+        if (!label) {
+          return;
+        }
+
+        code = code.replace(new RegExp(`'${node.label}'`, 'g'), `'${label}'`);
+        codeTextArea.value = code;
+        frame();
+      });
+
+      // TODO: Adjust SVG size to account for the foreignObject placement
+      const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+      foreignObject.setAttribute('height', 15);
+      foreignObject.setAttribute('width', 15);
+      foreignObject.setAttribute('x', ~~node.x + 1);
+      foreignObject.setAttribute('y', ~~(node.y - node.height / 2) + 1 - 15);
+      foreignObject.innerHTML = '+';
+      svg.append(foreignObject);
+
+      foreignObject.addEventListener('click', () => {
+        const id = Math.random();
+        code += '\n';
+        code += `node('${id}', 'New');\n`;
+        code += `edge('${id}', '${nodeId}');\n`;
+        codeTextArea.value = code;
+        frame();
+      });
     }
 
     for (const edgeId of graph.edges()) {
@@ -147,6 +176,27 @@ window.addEventListener('load', () => {
       const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
       polyline.setAttribute('points', edge.points.map(point => (~~point.x + 1) + ',' + (~~point.y + 1)).join(' '));
       svg.append(polyline);
+
+      // TODO: Place such that the foreignObject instances do not cross the line
+      const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+      foreignObject.setAttribute('height', 15);
+      foreignObject.setAttribute('width', 15);
+      foreignObject.setAttribute('x', ~~edge.points[1].x + 1 - 15 / 2);
+      foreignObject.setAttribute('y', ~~edge.points[1].y + 1 - 15 / 2);
+      foreignObject.innerHTML = '+';
+      svg.append(foreignObject);
+
+      foreignObject.addEventListener('click', () => {
+        const id = Math.random();
+        code += '\n';
+        code += `node('${id}', 'New');\n`;
+        code += `edge('${id}', '${edgeId.v}');\n`;
+        code += `edge('${id}', '${edgeId.w}');\n`;
+        code = code.replace(`edge('${edgeId.v}', '${edgeId.w}');\n`, '');
+        code = code.replace(`edge('${edgeId.w}', '${edgeId.v}');\n`, '');
+        codeTextArea.value = code;
+        frame();
+      });
     }
 
     _svg.replaceWith(svg);
