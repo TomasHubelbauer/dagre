@@ -7,30 +7,30 @@ window.addEventListener('load', () => {
   function initial() {
     // API:
     // - `graph` from Dagre is available
-    // - `measure` exists to measure label size
-    // - `node` is a shortcut for `graph.setNode(id, measure(label))`
-    // - `edge` is a shortcut for `graph.setEdge(vId, wId)`
+    // - `measure(label): { label, width, height }` exists to measure label size
+    // - `node(id, label=id)` is a shortcut for `graph.setNode(id, measure(label))`
+    // - `edge(vId, wId)` is a shortcut for `graph.setEdge(vId, wId)`
 
-    node('root', 'Root');
+    node('Root');
 
-    node('branch-1', 'Branch 1');
-    edge('root', 'branch-1');
+    node('Branch 1');
+    edge('Root', 'Branch 1');
 
-    node('branch-1-1', 'Branch 1-1');
-    edge('branch-1', 'branch-1-1');
+    node('Branch 1-1');
+    edge('Branch 1', 'Branch 1-1');
 
-    node('branch-1-2', 'Branch 1-2');
-    edge('branch-1', 'branch-1-2');
+    node('Branch 1-2');
+    edge('Branch 1', 'Branch 1-2');
 
-    node('merge', 'Merge');
-    edge('branch-1-1', 'merge');
-    edge('branch-1-2', 'merge');
+    node('Merge');
+    edge('Branch 1-1', 'Merge');
+    edge('Branch 1-2', 'Merge');
 
-    node('branch-2', 'Branch 2');
-    edge('root', 'branch-2');
+    node('Branch 2');
+    edge('Root', 'Branch 2');
 
-    node('branch-2-1', 'Branch 2-1');
-    edge('branch-2', 'branch-2-1');
+    node('Branch 2-1');
+    edge('Branch 2', 'Branch 2-1');
   }
 
   let code = initial.toString().split(/\n/g).slice(1, -1).map(line => line.slice('    '.length)).join('\n') + '\n';
@@ -68,7 +68,7 @@ window.addEventListener('load', () => {
     return { label, width: ~~metrics.width + spacing * 2, height: Number.parseInt(fontSize) + spacing * 2 };
   }
 
-  function node(/** @type {string} */ id, /** @type {string} */ label) {
+  function node(/** @type {string} */ id, /** @type {string} */ label = id) {
     graph.setNode(id, measure(label));
   }
 
