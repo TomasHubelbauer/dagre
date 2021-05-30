@@ -136,7 +136,7 @@ window.addEventListener('load', () => {
       svg.append(text);
 
       text.addEventListener('click', () => {
-        const label = prompt(node.label);
+        const label = prompt(node.label, node.label);
         if (!label) {
           return;
         }
