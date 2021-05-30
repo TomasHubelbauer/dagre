@@ -1,0 +1,59 @@
+html {
+  display: flex;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  font: normal 10pt sans-serif;
+  margin: 1em;
+}
+
+h1 {
+  margin: 0 0 1ex;
+  text-align: center;
+}
+
+#panelsDiv {
+  display: flex;
+  flex: 1;
+  gap: 1em;
+  overflow: hidden;
+}
+
+#panelsDiv > div {
+  flex: 1;
+}
+
+#codeDiv {
+  display: flex;
+  flex-direction: column;
+}
+
+textarea {
+  flex: 1;
+}
+
+rect {
+  fill: none;
+  stroke: gray;
+}
+
+polyline {
+  fill: none;
+  stroke: gray;
+}
+
+#jsonDiv {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#dataDiv {
+  font: normal 10pt monospace;
+  overflow: auto;
+  white-space: pre;
+}

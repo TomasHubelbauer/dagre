@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dagre</title>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="icon" href="icon.png" />
+    <script src="https://dagrejs.github.io/project/dagre/latest/dagre.js"></script>
+    <script src="index.js" type="module"></script>
+  </head>
+  <body>
+    <h1>Dagre</h1>
+    <div id="panelsDiv">
+      <div id="codeDiv">
+        <div id="evalDiv"></div>
+        <textarea id="codeTextArea"></textarea>
+      </div>
+      <svg id="graphSvg"></svg>
+      <div id="jsonDiv">
+        <div>
+          <input id="layoutInput" type="checkbox" />
+          <label for="layoutInput">Laid out</label>
+        </div>
+        <div id="dataDiv"></div>
+      </div>
+    </div>
+  </body>
+</html>
