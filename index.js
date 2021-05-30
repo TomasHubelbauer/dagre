@@ -156,9 +156,14 @@ window.addEventListener('load', () => {
       svg.append(foreignObject);
 
       foreignObject.addEventListener('click', () => {
-        const id = Math.random();
+        let id = 1;
+        while (code.includes(`'New${id === 1 ? '' : id}'`)) {
+          id++;
+        }
+
+        id = `New${id === 1 ? '' : id}`;
         code += '\n';
-        code += `node('${id}', 'New');\n`;
+        code += `node('${id}');\n`;
         code += `edge('${id}', '${nodeId}');\n`;
         codeTextArea.value = code;
         frame();
@@ -187,9 +192,14 @@ window.addEventListener('load', () => {
       svg.append(foreignObject);
 
       foreignObject.addEventListener('click', () => {
-        const id = Math.random();
+        let id = 1;
+        while (code.includes(`'New${id === 1 ? '' : id}'`)) {
+          id++;
+        }
+
+        id = `New${id === 1 ? '' : id}`;
         code += '\n';
-        code += `node('${id}', 'New');\n`;
+        code += `node('${id}');\n`;
         code += `edge('${edgeId.v}', '${id}');\n`;
         code += `edge('${id}', '${edgeId.w}');\n`;
         code = code.replace(`edge('${edgeId.v}', '${edgeId.w}');\n`, '');
