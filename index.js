@@ -110,8 +110,8 @@ window.addEventListener('load', () => {
     }
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('height', ~~graph.graph().height);
-    svg.setAttribute('width', ~~graph.graph().width);
+    svg.setAttribute('height', ~~graph.graph().height + 2);
+    svg.setAttribute('width', ~~graph.graph().width + 2);
 
     for (const nodeId of graph.nodes()) {
       const node = graph.node(nodeId);
@@ -123,15 +123,15 @@ window.addEventListener('load', () => {
 
       const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       rect.setAttribute('height', ~~node.height);
-      rect.setAttribute('x', ~~(node.x - node.width / 2));
-      rect.setAttribute('y', ~~(node.y - node.height / 2));
+      rect.setAttribute('x', ~~(node.x - node.width / 2) + 1);
+      rect.setAttribute('y', ~~(node.y - node.height / 2) + 1);
       rect.setAttribute('width', ~~node.width);
       svg.append(rect);
 
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('x', ~~node.x);
-      text.setAttribute('y', ~~node.y + spacing);
+      text.setAttribute('x', ~~node.x + 1);
+      text.setAttribute('y', ~~node.y + spacing + 1);
       text.textContent = node.label;
       svg.append(text);
     }
@@ -145,7 +145,7 @@ window.addEventListener('load', () => {
       }
 
       const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-      polyline.setAttribute('points', edge.points.map(point => ~~point.x + ',' + ~~point.y).join(' '));
+      polyline.setAttribute('points', edge.points.map(point => (~~point.x + 1) + ',' + (~~point.y + 1)).join(' '));
       svg.append(polyline);
     }
 
