@@ -164,7 +164,7 @@ window.addEventListener('load', () => {
         id = `New${id === 1 ? '' : id}`;
         code += '\n';
         code += `node('${id}');\n`;
-        code += `edge('${id}', '${nodeId}');\n`;
+        code += `edge('${nodeId}', '${id}');\n`;
         codeTextArea.value = code;
         frame();
       });
