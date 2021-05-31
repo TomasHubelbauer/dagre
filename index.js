@@ -109,9 +109,10 @@ window.addEventListener('load', () => {
       dataDiv.textContent = JSON.stringify(dagre.graphlib.json.write(graph), null, 2);
     }
 
+    const clearance = { left: 5, top: 15, right: 10, bottom: 5 };
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('height', ~~graph.graph().height + 2);
-    svg.setAttribute('width', ~~graph.graph().width + 2);
+    svg.setAttribute('height', ~~graph.graph().height + clearance.top + clearance.bottom);
+    svg.setAttribute('width', ~~graph.graph().width + clearance.left + clearance.right);
 
     for (const nodeId of graph.nodes()) {
       const node = graph.node(nodeId);
@@ -124,14 +125,14 @@ window.addEventListener('load', () => {
       const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       rect.setAttribute('height', ~~node.height);
       rect.setAttribute('width', ~~node.width);
-      rect.setAttribute('x', ~~(node.x - node.width / 2) + 1);
-      rect.setAttribute('y', ~~(node.y - node.height / 2) + 1);
+      rect.setAttribute('x', ~~(node.x - node.width / 2) + clearance.left);
+      rect.setAttribute('y', ~~(node.y - node.height / 2) + clearance.top);
       svg.append(rect);
 
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('x', ~~node.x + 1);
-      text.setAttribute('y', ~~node.y + spacing + 1);
+      text.setAttribute('x', ~~node.x + clearance.left);
+      text.setAttribute('y', ~~node.y + spacing + clearance.top);
       text.textContent = node.label;
       svg.append(text);
 
@@ -146,12 +147,11 @@ window.addEventListener('load', () => {
         frame();
       });
 
-      // TODO: Adjust SVG size to account for the foreignObject placement
       const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
       foreignObject.setAttribute('height', 15);
       foreignObject.setAttribute('width', 15);
-      foreignObject.setAttribute('x', ~~node.x + 1);
-      foreignObject.setAttribute('y', ~~(node.y - node.height / 2) + 1 - 15);
+      foreignObject.setAttribute('x', ~~(node.x + node.width / 2) + clearance.left);
+      foreignObject.setAttribute('y', ~~(node.y - node.height / 2) + clearance.top - 15);
       foreignObject.innerHTML = '+';
       svg.append(foreignObject);
 
@@ -179,15 +179,14 @@ window.addEventListener('load', () => {
       }
 
       const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-      polyline.setAttribute('points', edge.points.map(point => (~~point.x + 1) + ',' + (~~point.y + 1)).join(' '));
+      polyline.setAttribute('points', edge.points.map(point => (~~point.x + clearance.left) + ',' + (~~point.y + clearance.top)).join(' '));
       svg.append(polyline);
 
-      // TODO: Place such that the foreignObject instances do not cross the line
       const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
       foreignObject.setAttribute('height', 15);
       foreignObject.setAttribute('width', 15);
-      foreignObject.setAttribute('x', ~~edge.points[1].x + 1 - 15 / 2);
-      foreignObject.setAttribute('y', ~~edge.points[1].y + 1 - 15 / 2);
+      foreignObject.setAttribute('x', ~~edge.points[1].x + clearance.left - 15 / 2);
+      foreignObject.setAttribute('y', ~~edge.points[1].y + clearance.top);
       foreignObject.innerHTML = '+';
       svg.append(foreignObject);
 

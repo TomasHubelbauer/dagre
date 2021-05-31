@@ -18,6 +18,4 @@
 
 ## To-Do
 
-### Adjust code `TODO` comments
-
 ### Implement a UI control for removing nodes and edges (right-click?)
