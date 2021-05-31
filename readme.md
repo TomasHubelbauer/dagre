@@ -19,3 +19,12 @@
 ## To-Do
 
 ### Implement a UI control for removing nodes and edges (right-click?)
+
+### Animate motion when adding and removing nodes and edges piece-wise
+
+For my use case the graph will never update by anything other than an addition
+or removal of a single node+edge. It should be simple to track updates chart to
+chart and if such change is encountered, animate the values of all of the
+existing nodes and edges and the new node and edge. This will make it easy to
+notice when the order of branches has changed. Do not animate for other types
+of changes, those can only be done through the code and not the UI controls.
