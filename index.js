@@ -139,7 +139,7 @@ window.addEventListener('load', () => {
       foreignObject.setAttribute('height', 15);
       foreignObject.setAttribute('width', 15);
       foreignObject.setAttribute('x', ~~edge.points[1].x + clearance.left - 15 / 2);
-      foreignObject.setAttribute('y', ~~edge.points[1].y + clearance.top);
+      foreignObject.setAttribute('y', ~~edge.points[1].y + clearance.top - 15 / 2);
 
       const button = document.createElement('button');
       button.textContent = '+';
@@ -180,6 +180,7 @@ window.addEventListener('load', () => {
 
       const button = document.createElement('button');
       button.textContent = '+';
+      button.className = 'nodeButton';
       button.addEventListener('click', () => {
         let id = 1;
         while (code.includes(`'New${id === 1 ? '' : id}'`)) {
