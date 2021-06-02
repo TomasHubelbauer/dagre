@@ -18,7 +18,15 @@
 
 ## To-Do
 
-### Implement a UI control for removing nodes and edges (right-click?)
+### Implement a UI control for removing nodes and edges
+
+Make it so that the `foreignObject` for the UI controls in the edge midpoint and
+atop the node box are zero-sized and use overflow to position their contents.
+
+Have all of the `foreignObject` instances have buttons for add, delete and for
+nodes also rename, but make the non-add buttons hidden when not hovered or
+focused (for touch). Center using `calc` in both cases or maybe `-50%` margin
+will work?
 
 ### Animate motion when adding and removing nodes and edges piece-wise
 
