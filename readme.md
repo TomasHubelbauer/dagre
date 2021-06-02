@@ -9,8 +9,6 @@
 
 `npx serve .` for ESM and CORS to work (`file://` protocol won't work).
 
-[GitHub Pages](https://tomashubelbauer.github.io/dagre)
-
 ## Features
 
 - Code synced to graph
