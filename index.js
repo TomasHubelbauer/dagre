@@ -25,8 +25,7 @@ window.addEventListener('load', () => {
     edge('Branch 1-1', 'Merge');
     edge('Branch 1-2', 'Merge');
 
-    branch('Root', 'Branch 2');
-    chain('Branch 2', 'Branch 2-1', 'Branch 2-1-1');
+    chain('Root', 'Branch 2', 'Branch 2-1', 'Branch 2-1-1');
   }
 
   const demoCode = demo.toString().split(/\n/g).slice(1, -1).map(line => line.slice('    '.length)).join('\n') + '\n';
@@ -91,6 +90,11 @@ window.addEventListener('load', () => {
   }
 
   function branch(/** @type {string} */ originId, /** @type {string} */ id, /** @type {string} */ label = id) {
+    // Create the origin node too if it doesn't exist
+    if (!new RegExp(`node\\('${originId}'`, 'g').test(code)) {
+      node(originId);
+    }
+
     node(id, label);
     edge(originId, id);
   }
