@@ -27,7 +27,7 @@ window.addEventListener('load', () => {
     branch('Branch 2', 'Branch 2-1');
   }
 
-  let code = initial.toString().split(/\n/g).slice(1, -1).map(line => line.slice('    '.length)).join('\n') + '\n';
+  let code = localStorage.getItem('code') ?? initial.toString().split(/\n/g).slice(1, -1).map(line => line.slice('    '.length)).join('\n') + '\n';
   let graph;
 
   codeTextArea.value = code;
@@ -38,6 +38,7 @@ window.addEventListener('load', () => {
       eval(codeTextArea.value);
       evalDiv.textContent = '';
       code = codeTextArea.value;
+      localStorage.setItem('code', code);
       frame();
     }
     catch (error) {
