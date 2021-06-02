@@ -4,8 +4,9 @@ window.addEventListener('load', () => {
   const evalDiv = document.getElementById('evalDiv');
   const layoutInput = document.getElementById('layoutInput');
   const dataDiv = document.getElementById('dataDiv');
+  const demoButton = document.getElementById('demoButton');
 
-  function initial() {
+  function demo() {
     // API:
     // - `graph` from Dagre is available
     // - `measure(label): { label, width, height }` exists to measure label size
@@ -27,7 +28,8 @@ window.addEventListener('load', () => {
     branch('Branch 2', 'Branch 2-1');
   }
 
-  let code = localStorage.getItem('code') ?? initial.toString().split(/\n/g).slice(1, -1).map(line => line.slice('    '.length)).join('\n') + '\n';
+  const demoCode = demo.toString().split(/\n/g).slice(1, -1).map(line => line.slice('    '.length)).join('\n') + '\n';
+  let code = localStorage.getItem('code') ?? demoCode;
   let graph;
 
   codeTextArea.value = code;
@@ -47,6 +49,13 @@ window.addEventListener('load', () => {
   });
 
   layoutInput.addEventListener('change', () => {
+    frame();
+  });
+
+  demoButton.addEventListener('click', () => {
+    code = demoCode;
+    codeTextArea.value = code;
+    localStorage.setItem('code', code);
     frame();
   });
 
