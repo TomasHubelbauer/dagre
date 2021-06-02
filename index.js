@@ -12,7 +12,7 @@ window.addEventListener('load', () => {
     // - `node(id, label=id)` is a shortcut for `graph.setNode(id, measure(label))`
     // - `edge(vId, wId)` is a shortcut for `graph.setEdge(vId, wId)`
 
-    node('Root');
+    node('Root', '<img src="icon.png" width="16" height="16" />');
 
     node('Branch 1');
     edge('Root', 'Branch 1');
@@ -56,7 +56,7 @@ window.addEventListener('load', () => {
     frame();
   });
 
-  function measure(/** @type {string} */ label) {
+  function measure(/** @type {HTMLElement} */ label) {
     testDiv.append(label);
     const { width, height } = testDiv.getBoundingClientRect();
     testDiv.innerHTML = '';
@@ -66,7 +66,7 @@ window.addEventListener('load', () => {
   function node(/** @type {string} */ id, /** @type {string} */ label = id) {
     const div = document.createElement('div');
     div.className = 'nodeDiv';
-    div.textContent = label;
+    div.innerHTML = label;
     div.addEventListener('click', () => {
       const _label = prompt(label, label);
       if (!_label) {
