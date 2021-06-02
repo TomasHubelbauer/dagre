@@ -28,10 +28,3 @@ chart and if such change is encountered, animate the values of all of the
 existing nodes and edges and the new node and edge. This will make it easy to
 notice when the order of branches has changed. Do not animate for other types
 of changes, those can only be done through the code and not the UI controls.
-
-### Display edge split as round button and node branch-out as a part of the text
-
-Currently, `foreignObject` is used for both the `+` buttons for edges and nodes.
-For edges, display as a round button directly over the mid-point of the edge
-track. For nodes, ditch the `text` and use `foreignObject` for both the button
-and the node label/content.

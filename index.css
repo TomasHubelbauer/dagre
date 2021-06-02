@@ -41,18 +41,32 @@ textarea {
   flex: 1;
 }
 
-rect {
-  fill: none;
-  stroke: gray;
-}
-
 polyline {
   fill: none;
   stroke: gray;
 }
 
 foreignObject {
+  overflow: visible;
+}
+
+foreignObject > button {
+  background: whitesmoke;
+  border: none;
+  border-radius: 50%;
   cursor: pointer;
+  height: 15px;
+  left: calc(50% - 15px / 2);
+  padding: 0;
+  position: absolute;
+  top: -10px;
+  width: 15px;
+}
+
+div.nodeDiv {
+  border: 1px solid gray;
+  padding: .25ex .5ex 0;
+  white-space: pre;
 }
 
 #jsonDiv {

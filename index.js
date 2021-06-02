@@ -56,16 +56,29 @@ window.addEventListener('load', () => {
     frame();
   });
 
-  const spacing = 5;
   function measure(/** @type {string} */ label) {
-    testDiv.innerHTML = label;
+    testDiv.append(label);
     const { width, height } = testDiv.getBoundingClientRect();
     testDiv.innerHTML = '';
-    return { label, width: ~~width + spacing * 2, height: ~~height + spacing * 2 };
+    return { label, width: ~~width, height: ~~height };
   }
 
   function node(/** @type {string} */ id, /** @type {string} */ label = id) {
-    graph.setNode(id, measure(label));
+    const div = document.createElement('div');
+    div.className = 'nodeDiv';
+    div.textContent = label;
+    div.addEventListener('click', () => {
+      const _label = prompt(label, label);
+      if (!_label) {
+        return;
+      }
+
+      code = code.replace(new RegExp(`'${label}'`, 'g'), `'${_label}'`);
+      codeTextArea.value = code;
+      frame();
+    });
+
+    graph.setNode(id, measure(div));
   }
 
   function edge(/** @type {string} */ vId, /** @type {string} */ wId) {
@@ -110,62 +123,6 @@ window.addEventListener('load', () => {
     svg.setAttribute('height', ~~graph.graph().height + clearance.top + clearance.bottom);
     svg.setAttribute('width', ~~graph.graph().width + clearance.left + clearance.right);
 
-    for (const nodeId of graph.nodes()) {
-      const node = graph.node(nodeId);
-
-      // Handle incorrect graph definition without crashing
-      if (!node) {
-        continue;
-      }
-
-      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rect.setAttribute('height', ~~node.height);
-      rect.setAttribute('width', ~~node.width);
-      rect.setAttribute('x', ~~(node.x - node.width / 2) + clearance.left);
-      rect.setAttribute('y', ~~(node.y - node.height / 2) + clearance.top);
-      svg.append(rect);
-
-      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('x', ~~node.x + clearance.left);
-      text.setAttribute('y', ~~node.y + spacing + clearance.top);
-      text.textContent = node.label;
-      svg.append(text);
-
-      text.addEventListener('click', () => {
-        const label = prompt(node.label, node.label);
-        if (!label) {
-          return;
-        }
-
-        code = code.replace(new RegExp(`'${node.label}'`, 'g'), `'${label}'`);
-        codeTextArea.value = code;
-        frame();
-      });
-
-      const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-      foreignObject.setAttribute('height', 15);
-      foreignObject.setAttribute('width', 15);
-      foreignObject.setAttribute('x', ~~(node.x + node.width / 2) + clearance.left);
-      foreignObject.setAttribute('y', ~~(node.y - node.height / 2) + clearance.top - 15);
-      foreignObject.innerHTML = '+';
-      svg.append(foreignObject);
-
-      foreignObject.addEventListener('click', () => {
-        let id = 1;
-        while (code.includes(`'New${id === 1 ? '' : id}'`)) {
-          id++;
-        }
-
-        id = `New${id === 1 ? '' : id}`;
-        code += '\n';
-        code += `node('${id}');\n`;
-        code += `edge('${nodeId}', '${id}');\n`;
-        codeTextArea.value = code;
-        frame();
-      });
-    }
-
     for (const edgeId of graph.edges()) {
       const edge = graph.edge(edgeId);
 
@@ -183,10 +140,10 @@ window.addEventListener('load', () => {
       foreignObject.setAttribute('width', 15);
       foreignObject.setAttribute('x', ~~edge.points[1].x + clearance.left - 15 / 2);
       foreignObject.setAttribute('y', ~~edge.points[1].y + clearance.top);
-      foreignObject.innerHTML = '+';
-      svg.append(foreignObject);
 
-      foreignObject.addEventListener('click', () => {
+      const button = document.createElement('button');
+      button.textContent = '+';
+      button.addEventListener('click', () => {
         let id = 1;
         while (code.includes(`'New${id === 1 ? '' : id}'`)) {
           id++;
@@ -202,6 +159,43 @@ window.addEventListener('load', () => {
         codeTextArea.value = code;
         frame();
       });
+
+      foreignObject.append(button);
+      svg.append(foreignObject);
+    }
+
+    for (const nodeId of graph.nodes()) {
+      const node = graph.node(nodeId);
+
+      // Handle incorrect graph definition without crashing
+      if (!node) {
+        continue;
+      }
+
+      const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+      foreignObject.setAttribute('height', node.height);
+      foreignObject.setAttribute('width', node.width);
+      foreignObject.setAttribute('x', ~~(node.x - node.width / 2) + clearance.left);
+      foreignObject.setAttribute('y', ~~(node.y - node.height / 2) + clearance.top);
+
+      const button = document.createElement('button');
+      button.textContent = '+';
+      button.addEventListener('click', () => {
+        let id = 1;
+        while (code.includes(`'New${id === 1 ? '' : id}'`)) {
+          id++;
+        }
+
+        id = `New${id === 1 ? '' : id}`;
+        code += '\n';
+        code += `node('${id}');\n`;
+        code += `edge('${nodeId}', '${id}');\n`;
+        codeTextArea.value = code;
+        frame();
+      });
+
+      foreignObject.append(button, node.label);
+      svg.append(foreignObject);
     }
 
     _svg.replaceWith(svg);
