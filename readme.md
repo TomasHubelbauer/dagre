@@ -36,3 +36,7 @@ chart and if such change is encountered, animate the values of all of the
 existing nodes and edges and the new node and edge. This will make it easy to
 notice when the order of branches has changed. Do not animate for other types
 of changes, those can only be done through the code and not the UI controls.
+
+### Remember successfully compiled code in local storage and recover on load
+
+Also add a reset button to reset the initial code.
