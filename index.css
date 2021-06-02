@@ -6,30 +6,19 @@ html {
 body {
   display: flex;
   flex: 1;
-  flex-direction: column;
   font: normal 10pt sans-serif;
+  gap: 1em;
   margin: 1em;
+  overflow: hidden;
 }
 
-h1 {
-  margin: 0 0 1ex;
-  text-align: center;
+body > div {
+  flex: 1;
 }
 
 #testDiv {
   position: absolute;
   visibility: hidden;
-}
-
-#panelsDiv {
-  display: flex;
-  flex: 1;
-  gap: 1em;
-  overflow: hidden;
-}
-
-#panelsDiv > div {
-  flex: 1;
 }
 
 #codeDiv {
@@ -85,9 +74,4 @@ div.nodeDiv {
   font: normal 10pt monospace;
   overflow: auto;
   white-space: pre;
-}
-
-#graphDiv {
-  flex: initial !important;
-  overflow: auto;
 }

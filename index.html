@@ -9,26 +9,23 @@
     <script src="index.js" type="module"></script>
   </head>
   <body>
-    <h1>Dagre</h1>
     <div id="testDiv"></div>
-    <div id="panelsDiv">
-      <div id="codeDiv">
-        <div>
-          <button id="demoButton">Demo</button>
-        </div>
-        <div id="evalDiv"></div>
-        <textarea id="codeTextArea"></textarea>
+    <div id="codeDiv">
+      <div>
+        <button id="demoButton">Demo</button>
       </div>
-      <div id="graphDiv">
-        <svg id="graphSvg"></svg>
+      <div id="evalDiv"></div>
+      <textarea id="codeTextArea"></textarea>
+    </div>
+    <div id="graphDiv">
+      <svg id="graphSvg"></svg>
+    </div>
+    <div id="jsonDiv">
+      <div>
+        <input id="layoutInput" type="checkbox" />
+        <label for="layoutInput">Laid out</label>
       </div>
-      <div id="jsonDiv">
-        <div>
-          <input id="layoutInput" type="checkbox" />
-          <label for="layoutInput">Laid out</label>
-        </div>
-        <div id="dataDiv"></div>
-      </div>
+      <div id="dataDiv"></div>
     </div>
   </body>
 </html>
