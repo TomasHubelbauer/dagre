@@ -13,6 +13,7 @@ window.addEventListener('load', () => {
     // - `node(id, label=id)` is a shortcut for `graph.setNode(id, measure(label))`
     // - `edge(vId, wId)` is a shortcut for `graph.setEdge(vId, wId)`
     // - `branch(originId, id, label=id)` to create an edge and a node together
+    // - `chain(originId, ...labels)` to create a chain of nodes and edges
 
     node('Root', '<img src="icon.png" width="16" height="16" />');
 
@@ -25,7 +26,7 @@ window.addEventListener('load', () => {
     edge('Branch 1-2', 'Merge');
 
     branch('Root', 'Branch 2');
-    branch('Branch 2', 'Branch 2-1');
+    chain('Branch 2', 'Branch 2-1', 'Branch 2-1-1');
   }
 
   const demoCode = demo.toString().split(/\n/g).slice(1, -1).map(line => line.slice('    '.length)).join('\n') + '\n';
@@ -67,6 +68,11 @@ window.addEventListener('load', () => {
   }
 
   function node(/** @type {string} */ id, /** @type {string} */ label = id) {
+    // Handle in progress code changes without collapsing the chart
+    if (id === '' || label === '') {
+      return;
+    }
+
     const div = document.createElement('div');
     div.className = 'nodeDiv';
     div.innerHTML = label;
@@ -89,7 +95,19 @@ window.addEventListener('load', () => {
     edge(originId, id);
   }
 
+  function chain(/** @type {string} */ originId, /** @type {string[]} */ ...labels) {
+    for (const label of labels) {
+      branch(originId, label);
+      originId = label;
+    }
+  }
+
   function edge(/** @type {string} */ vId, /** @type {string} */ wId) {
+    // Handle in progress code changes without collapsing the chart
+    if (wId === '') {
+      return;
+    }
+
     graph.setEdge(vId, wId);
   }
 
