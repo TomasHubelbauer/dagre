@@ -52,11 +52,10 @@ foreignObject {
 
 foreignObject > button {
   background: whitesmoke;
-  border: none;
+  border: 1px solid gray;
   border-radius: 50%;
   cursor: pointer;
   height: 15px;
-  outline: 1px solid gray;
   padding: 0;
   width: 15px;
 }
