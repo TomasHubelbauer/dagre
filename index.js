@@ -1,4 +1,5 @@
 window.addEventListener('load', () => {
+  const testDiv = document.getElementById('testDiv');
   const codeTextArea = document.getElementById('codeTextArea');
   const evalDiv = document.getElementById('evalDiv');
   const layoutInput = document.getElementById('layoutInput');
@@ -55,17 +56,12 @@ window.addEventListener('load', () => {
     frame();
   });
 
-  const canvas = document.createElement('canvas');
-
-  // Note that the canvas size does not need to be set (can be zero) for this to work
-  const context = canvas.getContext('2d');
-  const { fontWeight, fontSize, fontFamily } = window.getComputedStyle(document.body);
-  context.font = `${fontWeight} ${fontSize} ${fontFamily}`;
-
   const spacing = 5;
   function measure(/** @type {string} */ label) {
-    const metrics = context.measureText(label);
-    return { label, width: ~~metrics.width + spacing * 2, height: Number.parseInt(fontSize) + spacing * 2 };
+    testDiv.innerHTML = label;
+    const { width, height } = testDiv.getBoundingClientRect();
+    testDiv.innerHTML = '';
+    return { label, width: ~~width + spacing * 2, height: ~~height + spacing * 2 };
   }
 
   function node(/** @type {string} */ id, /** @type {string} */ label = id) {
