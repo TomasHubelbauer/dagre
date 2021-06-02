@@ -62,7 +62,7 @@ foreignObject > button {
 
 foreignObject > button.nodeButton {
   left: calc(50% - 15px / 2);
-  position: absolute;
+  position: fixed; /* Make Safari work by using `fixed` not `absolute` */
   top: -12px;
 }
 
