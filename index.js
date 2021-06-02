@@ -2,7 +2,9 @@ window.addEventListener('load', () => {
   const testDiv = document.getElementById('testDiv');
   const codeTextArea = document.getElementById('codeTextArea');
   const evalDiv = document.getElementById('evalDiv');
+  const toggleInput = document.getElementById('toggleInput');
   const layoutInput = document.getElementById('layoutInput');
+  const jsonDiv = document.getElementById('jsonDiv');
   const dataDiv = document.getElementById('dataDiv');
   const demoButton = document.getElementById('demoButton');
 
@@ -47,6 +49,12 @@ window.addEventListener('load', () => {
       evalDiv.textContent = 'Error: ' + error;
     }
   });
+
+  toggleInput.addEventListener('change', () => {
+    jsonDiv.classList.toggle('show', toggleInput.checked);
+  });
+
+  jsonDiv.classList.toggle('show', toggleInput.checked);
 
   layoutInput.addEventListener('change', () => {
     frame();

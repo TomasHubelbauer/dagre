@@ -70,6 +70,14 @@ div.nodeDiv {
   overflow: hidden;
 }
 
+#jsonDiv:not(.show) {
+  flex: initial;
+}
+
+#jsonDiv:not(.show) :not(:first-child) {
+  display: none;
+}
+
 #dataDiv {
   font: normal 10pt monospace;
   overflow: auto;
