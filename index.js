@@ -11,27 +11,20 @@ window.addEventListener('load', () => {
     // - `measure(label): { label, width, height }` exists to measure label size
     // - `node(id, label=id)` is a shortcut for `graph.setNode(id, measure(label))`
     // - `edge(vId, wId)` is a shortcut for `graph.setEdge(vId, wId)`
+    // - `branch(originId, id, label=id)` to create an edge and a node together
 
     node('Root', '<img src="icon.png" width="16" height="16" />');
 
-    node('Branch 1');
-    edge('Root', 'Branch 1');
-
-    node('Branch 1-1');
-    edge('Branch 1', 'Branch 1-1');
-
-    node('Branch 1-2');
-    edge('Branch 1', 'Branch 1-2');
+    branch('Root', 'Branch 1');
+    branch('Branch 1', 'Branch 1-1');
+    branch('Branch 1', 'Branch 1-2');
 
     node('Merge');
     edge('Branch 1-1', 'Merge');
     edge('Branch 1-2', 'Merge');
 
-    node('Branch 2');
-    edge('Root', 'Branch 2');
-
-    node('Branch 2-1');
-    edge('Branch 2', 'Branch 2-1');
+    branch('Root', 'Branch 2');
+    branch('Branch 2', 'Branch 2-1');
   }
 
   let code = initial.toString().split(/\n/g).slice(1, -1).map(line => line.slice('    '.length)).join('\n') + '\n';
@@ -79,6 +72,11 @@ window.addEventListener('load', () => {
     });
 
     graph.setNode(id, measure(div));
+  }
+
+  function branch(/** @type {string} */ originId, /** @type {string} */ id, /** @type {string} */ label = id) {
+    node(id, label);
+    edge(originId, id);
   }
 
   function edge(/** @type {string} */ vId, /** @type {string} */ wId) {
