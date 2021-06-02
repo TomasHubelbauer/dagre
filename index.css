@@ -86,3 +86,8 @@ div.nodeDiv {
   overflow: auto;
   white-space: pre;
 }
+
+#graphDiv {
+  flex: initial !important;
+  overflow: auto;
+}
