@@ -14,3 +14,9 @@ Dagre documentation:
 
 - https://github.com/dagrejs/dagre/wiki
 - https://github.com/dagrejs/graphlib/wiki
+
+## To-Do
+
+## Remove node if it is the only node at the side of an edge being removed
+
+If the incident node has no other connections, remove it with the edge.
