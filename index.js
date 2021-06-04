@@ -8,7 +8,7 @@ window.addEventListener('load', () => {
   else {
     graph = new dagre.graphlib.Graph();
     graph.setGraph({});
-    graph.setNode('Root', measure('Root'));
+    graph.setNode(0, measure('Root'));
     graph.graph().rankDir = 'BT';
     dagre.layout(graph);
 
@@ -46,9 +46,10 @@ window.addEventListener('load', () => {
             return;
           }
 
-          graph.setNode(label, measure(label));
-          graph.setEdge(edgeId.v, label);
-          graph.setEdge(label, edgeId.w);
+          const id = graph.nodeCount();
+          graph.setNode(id, measure(label));
+          graph.setEdge(edgeId.v, id);
+          graph.setEdge(id, edgeId.w);
           graph.removeEdge(edgeId.v, edgeId.w);
           break;
         }
@@ -72,7 +73,7 @@ window.addEventListener('load', () => {
     foreignObject.setAttribute('y', ~~(node.y - node.height / 2));
     foreignObject.setAttribute('class', 'node');
     foreignObject.addEventListener('click', () => {
-      const action = prompt('remove (0) | branch (1 or type label)');
+      const action = prompt('remove (0) | rename (1) | branch (2 or type label)');
       switch (action) {
         case null:
         case '': {
@@ -84,15 +85,26 @@ window.addEventListener('load', () => {
           break;
         }
         case '1':
-        case 'branch':
-        default: {
-          const label = (action !== '1' && action !== 'branch') ? action : prompt('Label:');
+        case 'rename': {
+          const label = prompt('Label:');
           if (!label) {
             return;
           }
 
-          graph.setNode(label, measure(label));
-          graph.setEdge(nodeId, label);
+          graph.setNode(nodeId, measure(label));
+          break;
+        }
+        case '2':
+        case 'branch':
+        default: {
+          const label = (action !== '2' && action !== 'branch') ? action : prompt('Label:');
+          if (!label) {
+            return;
+          }
+
+          const id = graph.nodeCount();
+          graph.setNode(id, measure(label));
+          graph.setEdge(nodeId, id);
           break;
         }
       }
@@ -102,7 +114,7 @@ window.addEventListener('load', () => {
       location.reload();
     });
 
-    foreignObject.append(node.label);
+    foreignObject.append(node.label + ' ' + nodeId);
     svg.append(foreignObject);
   }
 
