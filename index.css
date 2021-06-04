@@ -1,4 +1,11 @@
+html {
+  display: flex;
+  height: 100%;
+}
+
 body {
+  cursor: pointer;
+  flex: 1;
   font: normal 10pt sans-serif;
   text-align: center;
 }

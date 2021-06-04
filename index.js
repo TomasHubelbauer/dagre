@@ -8,7 +8,6 @@ window.addEventListener('load', () => {
   else {
     graph = new dagre.graphlib.Graph();
     graph.setGraph({});
-    graph.setNode(0, measure('Root'));
     graph.graph().rankDir = 'BT';
     dagre.layout(graph);
 
@@ -16,6 +15,20 @@ window.addEventListener('load', () => {
   }
 
   graph.setDefaultEdgeLabel(() => ({}));
+
+  document.body.addEventListener('click', () => {
+    const label = prompt('Label:');
+    if (!label) {
+      return;
+    }
+
+    const id = graph.nodeCount();
+    graph.setNode(id, measure(label));
+
+    dagre.layout(graph);
+    localStorage.setItem('dagre', JSON.stringify(dagre.graphlib.json.write(graph)));
+    location.reload();
+  });
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('height', ~~graph.graph().height);
