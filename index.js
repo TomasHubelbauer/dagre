@@ -103,7 +103,7 @@ window.addEventListener('load', () => {
         }
         case '1':
         case 'rename': {
-          const label = prompt('Label:');
+          const label = prompt('Label:', node.label);
           if (!label) {
             return;
           }
