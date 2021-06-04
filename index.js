@@ -39,7 +39,9 @@ window.addEventListener('load', () => {
 
     const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
     polyline.setAttribute('points', edge.points.map(point => ~~point.x + ',' + ~~point.y).join(' '));
-    polyline.addEventListener('click', () => {
+    polyline.addEventListener('click', event => {
+      event.stopPropagation();
+
       const action = prompt('remove (0) | split (1 or type label)');
       switch (action) {
         case null:
@@ -85,7 +87,9 @@ window.addEventListener('load', () => {
     foreignObject.setAttribute('x', ~~(node.x - node.width / 2));
     foreignObject.setAttribute('y', ~~(node.y - node.height / 2));
     foreignObject.setAttribute('class', 'node');
-    foreignObject.addEventListener('click', () => {
+    foreignObject.addEventListener('click', event => {
+      event.stopPropagation();
+
       const action = prompt('remove (0) | rename (1) | branch (2 or type label)');
       switch (action) {
         case null:
