@@ -1,245 +1,110 @@
+import measure from './measure.js';
+
 window.addEventListener('load', () => {
-  const testDiv = document.getElementById('testDiv');
-  const codeTextArea = document.getElementById('codeTextArea');
-  const evalDiv = document.getElementById('evalDiv');
-  const toggleInput = document.getElementById('toggleInput');
-  const layoutInput = document.getElementById('layoutInput');
-  const jsonDiv = document.getElementById('jsonDiv');
-  const dataDiv = document.getElementById('dataDiv');
-  const demoButton = document.getElementById('demoButton');
-
-  function demo() {
-    // API:
-    // - `graph` from Dagre is available
-    // - `measure(label): { label, width, height }` exists to measure label size
-    // - `node(id, label=id)` is a shortcut for `graph.setNode(id, measure(label))`
-    // - `edge(vId, wId)` is a shortcut for `graph.setEdge(vId, wId)`
-    // - `branch(originId, id, label=id)` to create an edge and a node together
-    // - `chain(originId, ...labels)` to create a chain of nodes and edges
-
-    node('Root', '<img src="icon.png" width="16" height="16" />');
-
-    branch('Root', 'Branch 1');
-    branch('Branch 1', 'Branch 1-1');
-    branch('Branch 1', 'Branch 1-2');
-
-    node('Merge');
-    edge('Branch 1-1', 'Merge');
-    edge('Branch 1-2', 'Merge');
-
-    chain('Root', 'Branch 2', 'Branch 2-1', 'Branch 2-1-1');
-  }
-
-  const demoCode = demo.toString().split(/\n/g).slice(1, -1).map(line => line.slice('    '.length)).join('\n') + '\n';
-  let code = localStorage.getItem('code') ?? demoCode;
   let graph;
+  if (localStorage.getItem('dagre')) {
+    graph = dagre.graphlib.json.read(JSON.parse(localStorage.getItem('dagre')));
+  }
+  else {
+    graph = new dagre.graphlib.Graph();
+    graph.setGraph({});
+    graph.setNode('Root', measure('Root'));
+    graph.graph().rankDir = 'BT';
+    dagre.layout(graph);
 
-  codeTextArea.value = code;
-  codeTextArea.addEventListener('input', () => {
-    try {
-      // Use a throwaway graph for the evaluation
-      graph = new dagre.graphlib.Graph();
-      eval(codeTextArea.value);
-      evalDiv.textContent = '';
-      code = codeTextArea.value;
-      localStorage.setItem('code', code);
-      frame();
-    }
-    catch (error) {
-      evalDiv.textContent = 'Error: ' + error;
-    }
-  });
-
-  toggleInput.addEventListener('change', () => {
-    jsonDiv.classList.toggle('show', toggleInput.checked);
-  });
-
-  jsonDiv.classList.toggle('show', toggleInput.checked);
-
-  layoutInput.addEventListener('change', () => {
-    frame();
-  });
-
-  demoButton.addEventListener('click', () => {
-    code = demoCode;
-    codeTextArea.value = code;
-    localStorage.setItem('code', code);
-    frame();
-  });
-
-  function measure(/** @type {HTMLElement} */ label) {
-    testDiv.append(label);
-    const { width, height } = testDiv.getBoundingClientRect();
-    testDiv.innerHTML = '';
-    return { label, width: ~~width, height: ~~height };
+    localStorage.setItem('dagre', JSON.stringify(dagre.graphlib.json.write(graph)));
   }
 
-  function node(/** @type {string} */ id, /** @type {string} */ label = id) {
-    // Handle in progress code changes without collapsing the chart
-    if (id === '' || label === '') {
-      return;
-    }
+  graph.setDefaultEdgeLabel(() => ({}));
 
-    const div = document.createElement('div');
-    div.className = 'nodeDiv';
-    div.innerHTML = label;
-    div.addEventListener('click', () => {
-      const _label = prompt(label, label);
-      if (!_label) {
-        return;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('height', ~~graph.graph().height);
+  svg.setAttribute('width', ~~graph.graph().width);
+
+  for (const edgeId of graph.edges()) {
+    const edge = graph.edge(edgeId);
+
+    const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    polyline.setAttribute('points', edge.points.map(point => ~~point.x + ',' + ~~point.y).join(' '));
+    polyline.addEventListener('click', () => {
+      const action = prompt('remove (0) | split (1 or type label)');
+      switch (action) {
+        case null:
+        case '': {
+          return;
+        }
+        case '0':
+        case 'remove': {
+          graph.removeEdge(edgeId.v, edgeId.w);
+          break;
+        }
+        case '1':
+        case 'split':
+        default: {
+          const label = (action !== '1' && action !== 'split') ? action : prompt('Label:');
+          if (!label) {
+            return;
+          }
+
+          graph.setNode(label, measure(label));
+          graph.setEdge(edgeId.v, label);
+          graph.setEdge(label, edgeId.w);
+          graph.removeEdge(edgeId.v, edgeId.w);
+          break;
+        }
       }
 
-      code = code.replace(new RegExp(`'${label}'`, 'g'), `'${_label}'`);
-      codeTextArea.value = code;
-      frame();
+      dagre.layout(graph);
+      localStorage.setItem('dagre', JSON.stringify(dagre.graphlib.json.write(graph)));
+      location.reload();
     });
 
-    graph.setNode(id, measure(div));
+    svg.append(polyline);
   }
 
-  function branch(/** @type {string} */ originId, /** @type {string} */ id, /** @type {string} */ label = id) {
-    // Create the origin node too if it doesn't exist
-    if (!new RegExp(`node\\('${originId}'`, 'g').test(code)) {
-      node(originId);
-    }
+  for (const nodeId of graph.nodes()) {
+    const node = graph.node(nodeId);
 
-    node(id, label);
-    edge(originId, id);
-  }
+    const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+    foreignObject.setAttribute('height', node.height);
+    foreignObject.setAttribute('width', node.width);
+    foreignObject.setAttribute('x', ~~(node.x - node.width / 2));
+    foreignObject.setAttribute('y', ~~(node.y - node.height / 2));
+    foreignObject.setAttribute('class', 'node');
+    foreignObject.addEventListener('click', () => {
+      const action = prompt('remove (0) | branch (1 or type label)');
+      switch (action) {
+        case null:
+        case '': {
+          return;
+        }
+        case '0':
+        case 'remove': {
+          graph.removeNode(nodeId);
+          break;
+        }
+        case '1':
+        case 'branch':
+        default: {
+          const label = (action !== '1' && action !== 'branch') ? action : prompt('Label:');
+          if (!label) {
+            return;
+          }
 
-  function chain(/** @type {string} */ originId, /** @type {string[]} */ ...labels) {
-    for (const label of labels) {
-      branch(originId, label);
-      originId = label;
-    }
-  }
+          graph.setNode(label, measure(label));
+          graph.setEdge(nodeId, label);
+          break;
+        }
+      }
 
-  function edge(/** @type {string} */ vId, /** @type {string} */ wId) {
-    // Handle in progress code changes without collapsing the chart
-    if (wId === '') {
-      return;
-    }
-
-    graph.setEdge(vId, wId);
-  }
-
-  let _svg = document.getElementById('graphSvg');
-  function frame() {
-    graph = new dagre.graphlib.Graph();
-
-    // Configure graph label
-    graph.setGraph({});
-
-    // Configure edge label
-    graph.setDefaultEdgeLabel(() => ({}));
-
-    try {
-      eval(code);
-    }
-    catch (error) {
-      evalDiv.textContent = 'Error: ' + error;
-    }
-
-    if (!layoutInput.checked) {
-      dataDiv.textContent = JSON.stringify(dagre.graphlib.json.write(graph), null, 2);
-    }
-
-    try {
-      graph.graph().rankDir = 'BT';
       dagre.layout(graph);
-    }
-    catch (error) {
-      evalDiv.textContent = 'Error: ' + error;
-    }
+      localStorage.setItem('dagre', JSON.stringify(dagre.graphlib.json.write(graph)));
+      location.reload();
+    });
 
-    if (layoutInput.checked) {
-      dataDiv.textContent = JSON.stringify(dagre.graphlib.json.write(graph), null, 2);
-    }
-
-    const clearance = { left: 5, top: 15, right: 10, bottom: 5 };
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('height', ~~graph.graph().height + clearance.top + clearance.bottom);
-    svg.setAttribute('width', ~~graph.graph().width + clearance.left + clearance.right);
-
-    for (const edgeId of graph.edges()) {
-      const edge = graph.edge(edgeId);
-
-      // Handle incorrect graph definition without crashing
-      if (!edge || !edge.points) {
-        continue;
-      }
-
-      const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-      polyline.setAttribute('points', edge.points.map(point => (~~point.x + clearance.left) + ',' + (~~point.y + clearance.top)).join(' '));
-      svg.append(polyline);
-
-      const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-      foreignObject.setAttribute('height', 15);
-      foreignObject.setAttribute('width', 15);
-      foreignObject.setAttribute('x', ~~edge.points[1].x + clearance.left - 15 / 2);
-      foreignObject.setAttribute('y', ~~edge.points[1].y + clearance.top - 15 / 2);
-
-      const button = document.createElement('button');
-      button.textContent = '+';
-      button.addEventListener('click', () => {
-        let id = 1;
-        while (code.includes(`'New${id === 1 ? '' : id}'`)) {
-          id++;
-        }
-
-        id = `New${id === 1 ? '' : id}`;
-        code += '\n';
-        code += `node('${id}');\n`;
-        code += `edge('${edgeId.v}', '${id}');\n`;
-        code += `edge('${id}', '${edgeId.w}');\n`;
-        code = code.replace(`edge('${edgeId.v}', '${edgeId.w}');\n`, '');
-        code = code.replace(`edge('${edgeId.w}', '${edgeId.v}');\n`, '');
-        codeTextArea.value = code;
-        frame();
-      });
-
-      foreignObject.append(button);
-      svg.append(foreignObject);
-    }
-
-    for (const nodeId of graph.nodes()) {
-      const node = graph.node(nodeId);
-
-      // Handle incorrect graph definition without crashing
-      if (!node) {
-        continue;
-      }
-
-      const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-      foreignObject.setAttribute('height', node.height);
-      foreignObject.setAttribute('width', node.width);
-      foreignObject.setAttribute('x', ~~(node.x - node.width / 2) + clearance.left);
-      foreignObject.setAttribute('y', ~~(node.y - node.height / 2) + clearance.top);
-
-      const button = document.createElement('button');
-      button.textContent = '+';
-      button.className = 'nodeButton';
-      button.addEventListener('click', () => {
-        let id = 1;
-        while (code.includes(`'New${id === 1 ? '' : id}'`)) {
-          id++;
-        }
-
-        id = `New${id === 1 ? '' : id}`;
-        code += '\n';
-        code += `node('${id}');\n`;
-        code += `edge('${nodeId}', '${id}');\n`;
-        codeTextArea.value = code;
-        frame();
-      });
-
-      foreignObject.append(button, node.label);
-      svg.append(foreignObject);
-    }
-
-    _svg.replaceWith(svg);
-    _svg = svg;
+    foreignObject.append(node.label);
+    svg.append(foreignObject);
   }
 
-  frame();
+  document.body.append(svg);
 });
