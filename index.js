@@ -114,7 +114,7 @@ window.addEventListener('load', () => {
       location.reload();
     });
 
-    foreignObject.append(node.label + ' ' + nodeId);
+    foreignObject.append(node.label);
     svg.append(foreignObject);
   }
 
