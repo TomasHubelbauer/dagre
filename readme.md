@@ -20,3 +20,8 @@ Dagre documentation:
 ## Remove node if it is the only node at the side of an edge being removed
 
 If the incident node has no other connections, remove it with the edge.
+
+## Implement https://web.dev/file-system-access load/save where supported
+
+Keep local storage as a fallback for the demo in browsers where it is not and
+maybe add load and save buttons for that case.

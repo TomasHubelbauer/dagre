@@ -1,20 +1,9 @@
 import measure from './measure.js';
+import load from './load.js';
+import save from './save.js';
 
 window.addEventListener('load', () => {
-  let graph;
-  if (localStorage.getItem('dagre')) {
-    graph = dagre.graphlib.json.read(JSON.parse(localStorage.getItem('dagre')));
-  }
-  else {
-    graph = new dagre.graphlib.Graph();
-    graph.setGraph({});
-    graph.graph().rankDir = 'LR';
-    dagre.layout(graph);
-
-    localStorage.setItem('dagre', JSON.stringify(dagre.graphlib.json.write(graph)));
-  }
-
-  graph.setDefaultEdgeLabel(() => ({}));
+  const graph = load();
 
   document.body.addEventListener('click', () => {
     const label = prompt('Label:');
@@ -25,9 +14,7 @@ window.addEventListener('load', () => {
     const id = graph.nodeCount();
     graph.setNode(id, measure(label));
 
-    dagre.layout(graph);
-    localStorage.setItem('dagre', JSON.stringify(dagre.graphlib.json.write(graph)));
-    location.reload();
+    save(graph);
   });
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -70,9 +57,7 @@ window.addEventListener('load', () => {
         }
       }
 
-      dagre.layout(graph);
-      localStorage.setItem('dagre', JSON.stringify(dagre.graphlib.json.write(graph)));
-      location.reload();
+      save(graph);
     });
 
     svg.append(polyline);
@@ -126,9 +111,7 @@ window.addEventListener('load', () => {
         }
       }
 
-      dagre.layout(graph);
-      localStorage.setItem('dagre', JSON.stringify(dagre.graphlib.json.write(graph)));
-      location.reload();
+      save(graph);
     });
 
     foreignObject.append(node.label);
