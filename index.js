@@ -8,7 +8,7 @@ window.addEventListener('load', () => {
   else {
     graph = new dagre.graphlib.Graph();
     graph.setGraph({});
-    graph.graph().rankDir = 'BT';
+    graph.graph().rankDir = 'LR';
     dagre.layout(graph);
 
     localStorage.setItem('dagre', JSON.stringify(dagre.graphlib.json.write(graph)));
